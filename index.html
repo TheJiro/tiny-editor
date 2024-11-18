@@ -27,27 +27,27 @@
       const content = tinymce.get('editor').getContent(); // Get formatted HTML content
 
       // Replace with your Power Automate HTTP request URL
-      fetch('https://prod-211.westeurope.logic.azure.com:443/workflows/b739bdf0f892463a9e3224a0278e81ea/triggers/manual/paths/invoke?api-version=2016-06-01', { 
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          content: content  // Send the content to Power Automate
-        })
-      })
-      .then(response => {
-        if (response.ok) {
-          alert('Content saved successfully!');
-        } else {
-          alert('Failed to save content.');
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while saving the content.');
-      });
-    });
+      fetch('https://prod-211.westeurope.logic.azure.com:443/workflows/b739bdf0f892463a9e3224a0278e81ea/triggers/manual/paths/invoke?api-version=2016-06-01', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ content: content })
+})
+.then(response => response.text()) // Log the raw response
+.then(data => {
+  console.log('Raw response:', data);
+  if (response.ok) {
+    alert('Content saved successfully!');
+  } else {
+    alert('Failed to save content.');
+  }
+})
+.catch(error => {
+  console.error('Error:', error);
+  alert('An error occurred while saving the content.');
+});
+
   </script>
 </body>
 </html>
