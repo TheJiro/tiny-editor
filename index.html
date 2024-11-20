@@ -26,8 +26,8 @@
     document.getElementById('saveButton').addEventListener('click', () => {
       const content = tinymce.get('editor').getContent(); // Get formatted HTML content
 
-      // Escape the HTML content (to ensure it's valid JSON)
-      const escapedContent = JSON.stringify({ content: content });
+      // Escape the HTML content
+      const escapedContent = encodeURIComponent(content); // Escape HTML content to be safe for JSON
 
       // Log the content for debugging
       console.log("Content being sent:", escapedContent);
@@ -38,7 +38,7 @@
         headers: {
           'Content-Type': 'application/json'
         },
-        body: escapedContent // Send the escaped content to Power Automate
+        body: JSON.stringify({ content: escapedContent }) // Send the escaped content to Power Automate
       })
       .then(response => {
         if (response.ok) {
