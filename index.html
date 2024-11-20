@@ -27,7 +27,7 @@
       // Get content from TinyMCE editor
       const content = tinymce.get('editor').getContent();
 
-      console.log("Encoded content being sent:", escapedContent); // Debug log
+      console.log("Encoded content being sent:", content); // This is what is shown in the console (F12)
 
       // Replace with your Power Automate HTTP request URL
       fetch('https://prod-211.westeurope.logic.azure.com:443/workflows/b739bdf0f892463a9e3224a0278e81ea/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=v-W52ugvL3grBIqGtUNE-p-uou7poAJZgwyAstwU-FI', { 
