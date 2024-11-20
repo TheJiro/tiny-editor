@@ -27,9 +27,6 @@
       // Get content from TinyMCE editor
       const content = tinymce.get('editor').getContent();
 
-      // Encode content to make it URL-safe
-      const escapedContent = encodeURIComponent(content);
-
       console.log("Encoded content being sent:", escapedContent); // Debug log
 
       // Replace with your Power Automate HTTP request URL
@@ -39,7 +36,7 @@
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          escapedContent: escapedContent // Send encoded content as 'escapedContent'
+          content: content // Send encoded content as 'content'
         })
       })
       .then(response => {
