@@ -25,9 +25,12 @@
     // Save button functionality
     document.getElementById('saveButton').addEventListener('click', () => {
       const content = tinymce.get('editor').getContent(); // Get formatted HTML content
-
+      
       // Log the content for debugging
-      console.log("Content being sent:", content);
+      console.log("TinyMCE content:", content);
+
+      const requestBody = JSON.stringify({ content: content });
+      console.log("Fetch request body:", requestBody); // Log the request body
 
       // Replace with your Power Automate HTTP request URL
       fetch('https://prod-211.westeurope.logic.azure.com:443/workflows/b739bdf0f892463a9e3224a0278e81ea/triggers/manual/paths/invoke?api-version=2016-06-01', { 
@@ -35,9 +38,7 @@
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          content: content  // Send the content to Power Automate
-        })
+        body: requestBody // Send the content to Power Automate
       })
       .then(response => {
         if (response.ok) {
@@ -45,7 +46,8 @@
           return response.json(); // Parse JSON response
         } else {
           alert('Failed to save content.');
-          console.error('Error response:', response);
+          console.error('Error response status:', response.status);
+          return response.text().then(text => console.error('Error response body:', text));
         }
       })
       .then(responseData => {
@@ -59,4 +61,5 @@
   </script>
 </body>
 </html>
+
 
