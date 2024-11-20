@@ -26,27 +26,31 @@
     document.getElementById('saveButton').addEventListener('click', () => {
       const content = tinymce.get('editor').getContent(); // Get formatted HTML content
 
-      // Debugging: Log the content being sent
-      console.log("Content being sent:", content);
+      // Escape the HTML content (to ensure it's valid JSON)
+      const escapedContent = JSON.stringify({ content: content });
+
+      // Log the content for debugging
+      console.log("Content being sent:", escapedContent);
 
       // Replace with your Power Automate HTTP request URL
-      fetch('https://prod-211.westeurope.logic.azure.com:443/workflows/b739bdf0f892463a9e3224a0278e81ea/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=v-W52ugvL3grBIqGtUNE-p-uou7poAJZgwyAstwU-FI', { 
+      fetch('https://prod-211.westeurope.logic.azure.com:443/workflows/b739bdf0f892463a9e3224a0278e81ea/triggers/manual/paths/invoke?api-version=2016-06-01', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          content: content  // Send the content to Power Automate
-        })
+        body: escapedContent // Send the escaped content to Power Automate
       })
       .then(response => {
-        console.log("HTTP Status:", response.status); // Debugging: Log HTTP status
         if (response.ok) {
           alert('Content saved successfully!');
+          return response.json(); // Parse JSON response
         } else {
           alert('Failed to save content.');
-          return response.json().then(err => console.error("Error response JSON:", err));
+          console.error('Error response:', response);
         }
+      })
+      .then(responseData => {
+        console.log('Power Automate response:', responseData); // Log the response from Power Automate
       })
       .catch(error => {
         console.error('Error:', error);
