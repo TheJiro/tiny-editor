@@ -45,11 +45,9 @@
           console.log('Success:', await response.json());
         } else {
           console.error('Error:', response.status, response.statusText);
-          alert('Failed to save content.');
         }
       } catch (error) {
         console.error('Error:', error);
-        alert('An error occurred while saving the content.');
       }
     });
   </script>
