@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rich Text Editor</title>
-<script src="https://cdn.tiny.cloud/1/1a3bhjyue59gsham7kcryyr5poheddgco0g7fvm1p8zjy2pw/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rich Text Editor</title>
+  <script src="https://cdn.tiny.cloud/1/1a3bhjyue59gsham7kcryyr5poheddgco0g7fvm1p8zjy2pw/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 </head>
 <body>
-<h2>Rich Text Editor</h2>
-<form id="editorForm">
-<textarea id="editor"></textarea>
-<button type="button" id="saveButton">Save</button>
-</form>
- 
+  <h2>Rich Text Editor</h2>
+  <form id="editorForm">
+    <textarea id="editor"></textarea>
+    <button type="button" id="saveButton">Save</button>
+  </form>
   <script>
     // Initialize TinyMCE
     tinymce.init({
@@ -21,38 +20,34 @@
       plugins: 'lists link image table code',
       toolbar: 'undo redo | bold italic underline | alignleft aligncenter alignright | bullist numlist outdent indent | link image | code'
     });
- 
+
     // Save button functionality
     document.getElementById('saveButton').addEventListener('click', () => {
       const content = tinymce.get('editor').getContent(); // Get formatted HTML content
- 
-      // Debugging: Log the content being sent
-      console.log("Content being sent:", content);
- 
-      // Here goes the Power Automate HTTP URL
-      fetch('https://prod-211.westeurope.logic.azure.com:443/workflows/b739bdf0f892463a9e3224a0278e81ea/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=v-W52ugvL3grBIqGtUNE-p-uou7poAJZgwyAstwU-FI', { 
+
+      fetch('https://prod-211.westeurope.logic.azure.com:443/workflows/b739bdf0f892463a9e3224a0278e81ea/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=v-W52ugvL3grBIqGtUNE-p-uou7poAJZgwyAstwU-FI', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          content: content  // Send the content to Power Automate
+        body: JSON.stringify({ content }) // Send the content to Power Automate
+      })
+        .then(response => response.json()) // Parse JSON response
+        .then(data => {
+          if (data.ContentID) {
+            alert('Content saved successfully!');
+            console.log('Received ContentID:', data.ContentID);
+            // Pass the ContentID to Adaptive Card or store it for later
+          } else {
+            alert('Failed to retrieve ContentID.');
+          }
         })
-      })
-      .then(response => {
-        console.log("HTTP Status:", response.status); // Debugging: Log HTTP status
-        if (response.ok) {
-          alert('Content saved successfully!');
-        } else {
-          alert('Failed to save content.');
-          return response.json().then(err => console.error("Error response JSON:", err));
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while saving the content.');
-      });
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred while saving the content.');
+        });
     });
-</script>
+  </script>
 </body>
 </html>
+
