@@ -3,57 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
   <title>Rich Text Editor</title>
-  <script src="https://cdn.tiny.cloud/1/1a3bhjyue59gsham7kcryyr5poheddgco0g7fvm1p8zjy2pw/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    #editor-container {
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
-  <h2>Rich Text Editor</h2>
-  <form id="editorForm">
-    <textarea id="editor"></textarea>
-    <button type="button" id="saveButton">Save</button>
-  </form>
+  <h1>Rich Text Editor</h1>
+  <div id="editor-container">
+    <textarea id="richTextEditor"></textarea>
+  </div>
+  <button id="saveButton">Save</button>
 
   <script>
     // Initialize TinyMCE
     tinymce.init({
-      selector: '#editor',
-      plugins: 'autolink lists link charmap preview anchor searchreplace visualblocks code fullscreen',
-      toolbar: 'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link',
-      height: 300
+      selector: '#richTextEditor',
+      height: 300,
+      menubar: false,
+      plugins: 'lists link image table code',
+      toolbar: 'undo redo | bold italic underline | bullist numlist outdent indent | link image table | code',
+      setup: function (editor) {
+        editor.on('init', function () {
+          console.log('TinyMCE initialized');
+        });
+      }
     });
 
-    // Save button functionality
+    // Event listener for the Save button
     document.getElementById('saveButton').addEventListener('click', async () => {
-      try {
-        const editorContent = tinymce.get('editor').getContent(); // Get content from editor
-        console.log('Editor Content:', editorContent);
+      const editorContent = tinymce.get('richTextEditor').getContent(); // Get editor content
+      console.log('Editor Content:', editorContent);
 
-        // Send content to Power Automate Flow
-        const response = await fetch('https://prod-211.westeurope.logic.azure.com:443/workflows/b739bdf0f892463a9e3224a0278e81ea/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=v-W52ugvL3grBIqGtUNE-p-uou7poAJZgwyAstwU-FI', {
+      try {
+        const response = await fetch('https://prod-211.westeurope.logic.azure.com:443/workflows/b739bdf0f892463a9e3224a0278e81ea/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=v-W52ugvL3grBIqGtUNE-p-uou7poAJZgwyAstwU-FI', { // Flow endpoint
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            content: editorContent
-          })
+            content: editorContent, // Send content in the request body
+          }),
         });
 
-        // Check the response
+        // Handle the response
         if (response.ok) {
-          alert('Content saved successfully!');
-          console.log('Success:', await response.json());
+          try {
+            const jsonResponse = await response.json();
+            console.log('Success:', jsonResponse);
+            alert('Content saved successfully!');
+          } catch (parseError) {
+            console.warn('Response is not valid JSON or is empty:', parseError);
+            const responseText = await response.text();
+            console.log('Raw Response Text:', responseText);
+            alert('Content saved, but response is invalid or empty.');
+          }
         } else {
-          console.error('Error:', response.status, response.statusText);
-          alert('Failed to save content.');
+          console.error('Error Response:', response.status, response.statusText);
+          alert(`Failed to save content. HTTP Status: ${response.status}`);
         }
       } catch (error) {
-        console.error('Error:', error);
-        alert('An error occurred while saving the content.');
+        console.error('Fetch Error:', error);
+        alert('An error occurred while saving content.');
       }
     });
   </script>
 </body>
 </html>
+
 
 
