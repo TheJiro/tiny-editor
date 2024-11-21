@@ -26,22 +26,31 @@
       const content = tinymce.get('editor').getContent(); // Get formatted HTML content
 
       fetch('https://prod-211.westeurope.logic.azure.com:443/workflows/b739bdf0f892463a9e3224a0278e81ea/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=v-W52ugvL3grBIqGtUNE-p-uou7poAJZgwyAstwU-FI', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ content }) // Send the content to Power Automate
-      })
-        .then(response => response.json()) // Parse JSON response
-        .then(data => {
-          if (data.ContentID) {
-            alert('Content saved successfully!');
-            console.log('Received ContentID:', data.ContentID);
-            // Pass the ContentID to Adaptive Card or store it for later
-          } else {
-            alert('Failed to retrieve ContentID.');
-          }
-        })
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ content: editorContent, aircraftID: aircraftID })
+})
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text(); // Use .text() for empty or non-JSON responses
+    })
+    .then(data => {
+        try {
+            // Attempt to parse JSON, fallback if it fails
+            const jsonData = JSON.parse(data);
+            console.log('Response as JSON:', jsonData);
+        } catch (e) {
+            console.log('Response as Text:', data);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+
         
     });
   </script>
