@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+edC<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -29,8 +29,8 @@
       // Debugging: Log the content being sent
       console.log("Content being sent:", content);
  
-      // Replace with your Power Automate HTTP request URL
-      fetch('https://prod-211.westeurope.logic.azure.com:443/workflows/b739bdf0f892463a9e3224a0278e81ea/triggers/manual/paths/invoke?api-version=2016-06-01', { 
+      // Here goes the Power Automate HTTP URL
+      fetch('https://prod-211.westeurope.logic.azure.com:443/workflows/b739bdf0f892463a9e3224a0278e81ea/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=v-W52ugvL3grBIqGtUNE-p-uou7poAJZgwyAstwU-FI', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
