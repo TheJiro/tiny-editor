@@ -138,11 +138,9 @@
           alert('Content saved successfully!');
           console.log('Success:', await response.json());
         } else {
-          alert('Failed to save content');
           console.error('Error:', response.status, response.statusText);
         }
       } catch (error) {
-        alert('An error occurred while saving the content');
         console.error('Error:', error);
       }
     });
