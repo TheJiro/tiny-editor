@@ -24,7 +24,7 @@
     const acReg = getQueryParam('ACReg');
     console.log("ACReg:", acReg); // Debugging
 
-    // Function to fetch content from Power Automate Flow
+    // Fetch Content Function with Enhanced Debugging
     async function fetchContent(acReg) {
       try {
         const response = await fetch(
@@ -34,20 +34,33 @@
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ ACReg: acReg }),
+            body: JSON.stringify({ ACReg: acReg }), // Include ACReg for context
           }
         );
 
-        if (response.ok) {
-          const data = await response.text(); // Assume content is returned as plain text
-          return data;
-        } else {
-          console.error('Error fetching content:', response.statusText);
-          return 'Error loading content';
+        // Check if the response is successful
+        if (!response.ok) {
+          console.error('Failed to fetch content. HTTP Status:', response.status, response.statusText);
+          return '';
         }
+
+        const contentType = response.headers.get('Content-Type');
+
+        // Handle JSON response
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json();
+          console.log('Fetched content (JSON):', data);
+          return data.content || ''; // Assume content is returned under 'content'
+        }
+
+        // Handle plain text response
+        const data = await response.text();
+        console.log('Fetched content (Text):', data);
+        return data;
+
       } catch (error) {
-        console.error('Error:', error);
-        return 'Error fetching data';
+        console.error('Error fetching content:', error);
+        return ''; // Return empty string on error
       }
     }
 
@@ -61,10 +74,10 @@
         // Fetch and set content on editor initialization
         editor.on('init', async function () {
           const content = await fetchContent(acReg); // Fetch preloaded content
-          console.log('Fetched content:', content); // Debugging
+          console.log('Fetched content for TinyMCE:', content); // Debugging
           editor.setContent(content || 'No content available for editing'); // Set content or fallback
         });
-      },
+      }
     });
 
     // Save button functionality
@@ -83,7 +96,7 @@
             },
             body: JSON.stringify({
               ACReg: acReg, // Send ACReg for context
-              content: editorContent, // Updated content
+              content: editorContent // Updated content
             }),
           }
         );
