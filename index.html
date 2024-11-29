@@ -26,27 +26,28 @@
 
     // Function to fetch content from Power Automate Flow
     async function fetchContent(acReg) {
-      try {
-        const response = await fetch('https://prod-211.westeurope.logic.azure.com:443/workflows/b739bdf0f892463a9e3224a0278e81ea/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=v-W52ugvL3grBIqGtUNE-p-uou7poAJZgwyAstwU-FI', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ ACReg: acReg })
-        });
+  try {
+    const response = await fetch('https://prod-211.westeurope.logic.azure.com:443/workflows/b739bdf0f892463a9e3224a0278e81ea/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=v-W52ugvL3grBIqGtUNE-p-uou7poAJZgwyAstwU-FI', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ ACReg: acReg })
+    });
 
-        if (response.ok) {
-          const data = await response.text(); // Assume content is returned as plain text
-          return data;
-        } else {
-          console.error('Error fetching content:', response.statusText);
-          return 'Error loading content';
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        return 'Error fetching data';
-      }
+    if (response.ok) {
+      const data = await response.text(); // Assume content is plain text
+      console.log('Fetched content:', data); // Debugging
+      return data;
+    } else {
+      console.error('Error fetching content:', response.statusText);
+      return 'Error loading content';
     }
+  } catch (error) {
+    console.error('Error:', error);
+    return 'Error fetching data';
+  }
+}
 
     // Initialize TinyMCE
     tinymce.init({
